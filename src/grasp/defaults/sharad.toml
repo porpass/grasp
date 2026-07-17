@@ -1,0 +1,163 @@
+# Per-stage parameter defaults for SHARAD processing.
+# Tables under [base.*] apply to all product types; tables under
+# [EDR.*] / [RDR.*] override or extend the base values.
+
+[base.general]
+verbose = true
+
+[base.output]
+data_output_type = "BASIC"
+byte_order       = "big"
+
+[base.plots]
+vmin       = 0
+vmax       = 30
+invert     = false
+buffer_km  = 25.0
+per_frame  = false
+
+[base.final_output]
+save_data   = true
+save_images = true
+save_segy   = false
+save_state  = false
+
+[base.csim]
+enabled     = true
+save_state  = false
+save_data   = true
+save_images = true
+apply_curve = true
+ct_step     = 105.0
+ct_dist     = 90000.0
+################################################################
+#
+# EDR
+#
+################################################################
+[EDR.preprocessing]
+enabled      = true
+align_traces = true
+save_data    = false
+save_images  = false
+save_state   = false
+
+[EDR.range_compression]
+enabled      = true
+chirp_type   = "CALIBRATED"
+filter_type  = "MATCHED"
+window       = "BLACKMAN"
+window_alpha = 0.5
+save_data    = false
+save_images  = false
+save_state   = false
+
+[EDR.emi_suppression]
+enabled          = true
+method           =  "ADAPTIVE"
+statistic        =  "MAD"
+k                =  6.0
+window_size      = 129
+replace_strategy = "INTERP"
+interp_pad       = 10
+save_data        = false
+save_images      = false
+save_state       = false
+
+[EDR.iono_comp]
+enabled          = true
+method           = "CAMPBELL"
+campbell_b       = 1.93
+campbell_n_phase = 400
+campbell_delta   = 0.0125
+contrast_L_eq    = 80e3
+window           = "RECTANGLE"
+window_alpha     = 0.5
+save_data        = false
+save_images      = false
+save_state       = false
+
+[EDR.sar]
+enabled                 = true
+method                  = "RANGE-DOPPLER"
+lamb                    = 12
+os_factor               = 1
+window                  = "HANNING"
+window_alpha            = 0.5
+number_of_looks         = 7
+remove_doppler_centroid = false
+interp_cval             = 0.0
+save_data               = false
+save_images             = false
+save_state              = false
+
+[EDR.mlk]
+enabled         = true
+number_of_looks = 7
+os_factor       = 1
+window_type     = "HANNING"
+window_alpha    = 0.5
+coherent        = false
+save_data       = false
+save_images     = false
+save_state      = false
+################################################################
+#
+# RDR
+#
+################################################################
+[RDR.preprocessing] # TODO Need to install these functions
+enabled      = false
+align_traces = true
+save_data    =  false
+save_images  = false
+save_state   = false
+
+[RDR.range_compression]
+enabled = false
+
+[RDR.emi_suppression] # TODO Need to test this! Could be True?
+enabled = false
+save_data = false
+save_images = false
+save_state = false
+
+[RDR.iono_comp] # TODO Need to test this!
+enabled = false
+save_data = false
+save_images = false
+save_state = false
+
+[RDR.sar]
+enabled = false
+save_data = false
+save_images = false
+save_state = false
+
+[RDR.mlk] # TODO Need to test this!
+enabled = false
+save_data = false
+save_images = false
+save_state = false
+################################################################
+#
+# US_RDR
+#
+################################################################
+[US_RDR.preprocessing]
+enabled = false
+
+[US_RDR.range_compression]
+enabled = false
+
+[US_RDR.emi_suppression]
+enabled = false
+
+[US_RDR.iono_comp]
+enabled = false
+
+[US_RDR.sar]
+enabled = false
+
+[US_RDR.mlk]
+enabled = false

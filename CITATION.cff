@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "GRaSP: Generalized Radar Sounder Processor"
+authors:
+  - family-names: Perry
+    given-names: Matthew R.
+    email: mperry@psi.edu
+version: 0.5.1
+date-released: 2026-06-08
+license: BSD-3-Clause
+repository-code: "https://github.com/mr-perry/grasp"
+keywords:
+  - radar sounder
+  - planetary science
+  - SHARAD
+  - MARSIS
+  - LRS

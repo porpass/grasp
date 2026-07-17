@@ -1,0 +1,27 @@
+# GRaSP Configuration File
+#
+# Copy this file to `config.toml` at the repository root and fill in the
+# paths for the data products you have locally. Any key you leave unset
+# raises FileNotFoundError only if a code path needs it. Installed
+# (non-editable) users should prefer the equivalent GRASP_<KEY>_PATH /
+# GRASP_SPICE_<KEY>_PATH environment variables — see the README's
+# "Note on Configuration File" section.
+
+[data_paths]
+# Mars — MOLA / HRSC DEMs.
+mola          = "/path/to/MGS/mola/pds/megdr"
+mola_global   = "/path/to/MGS/mola/Global_DEMs/MOLA_SHARAD_128ppd_radius_neworigin_00_463.057.tif"
+areoid_global = "/path/to/MGS/mola/Global_DEMs/mega90n00eb.tif"
+mola_hrsc     = "/path/to/MGS/mola/Global_DEMs/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2.tif"
+
+# Moon — LOLA global DEM.
+lola = "/path/to/LRO/LOLA/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif"
+
+# Phobos DEM(s) — not yet used by any pipeline stage.
+
+[spice]
+# NAIF SPICE metakernel directories, one per mission. Point to the
+# directory that contains the mission's .tm/.mk metakernel files.
+mro_mk    = "/path/to/NAIF/mro-m-spice/mrosp_1000/extras/mk"
+mex_mk    = "/path/to/NAIF/mex-e_m-spice/mexsp_2000/EXTRAS/MK"
+selene_mk = "/path/to/NAIF/sln-l-spice/slnsp_1000/extras/mk"

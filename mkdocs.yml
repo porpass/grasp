@@ -1,0 +1,40 @@
+site_name: GRaSP Documentation
+site_url: https://porpass.local/grasp-docs/
+theme:
+  name: readthedocs
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+
+nav:
+  - Home: index.md
+  - External Data: external-data.md
+  - Quickstart: quickstart.md
+  - TOML reference: toml-reference.md
+  - Core: core.md
+  - Common: common.md
+  - Input: input.md
+  - Instruments:
+    - SHARAD: sharad.md
+    - MARSIS: marsis.md
+    - LRS: lrs.md
+  - Geospatial: geospatial.md
+  - SPICE: spice.md
+  - Datuming: datuming.md
+  - Processing:
+    - Overview: processing/index.md
+    - Helpers: processing/helpers.md
+    - Range Compression: processing/range_compression.md
+    - EMI: processing/emi.md
+    - Ionosphere: processing/ionosphere.md
+    - SAR: processing/sar.md
+  - Postprocessing: postprocessing.md
+  - Simulation: simulation.md
+  - Output: output.md

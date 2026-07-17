@@ -1,0 +1,323 @@
+PDS_VERSION_ID                   = PDS3
+RECORD_TYPE                      = STREAM
+OBJECT                           = TEXT
+  PUBLICATION_DATE               = 2007-06-01
+  NOTE                           = "Description of the CALIB
+                                    directory contents for the MRO
+                                    SHARAD EDR/RDR archives."
+END_OBJECT                       = TEXT
+END
+
+                   CALIB Directory Contents
+
+In SHARAD ground processing, the range processing of each echo is performed
+by computing the FFT of the discretely sampled pulse echo, by multiplying it
+by the complex conjugate of the FFT of the discretely sampled transmitted
+signal (which is called reference chirp) and then by performing the IFFT of
+the result: because of the properties of Fourier transform pairs, this is
+equivalent to the computation of a correlation in the time domain.
+
+The CALIB directory contains reference chirps for the MRO SHARAD EDR/RDR
+archives, plus the documentation describing how they have been produced.
+
+It has been found that amplitude and phase of the reference chirp are a
+function of the temperatures of both transmitter and receiver. From ground
+tests, the behavior of the chirp has been determined, and is reported here in
+the form of 40 binary files. Each file contains the FFT of the base-banded
+reference chirp for a given combination of transmitter and receiver
+temperatures.
+
+Such combination of transmitter and receiver temperatures is indicated in the
+file name. For example, the file called REFERENCE_CHIRP_M05TX_M20RX.DAT
+contains the reference chirp for a transmitter temperature of -5 degrees C
+(as denoted by the mnemonic M05TX) and a receiver temperature of -20
+degrees C (as denoted by the mnemonic M20RX).
+
+To choose the correct reference chirp for range compression, it is necessary
+to read the transmitter and receiver temperatures as reported in the auxiliary
+data of each data product, and then to select the chirp whose transmitter and
+receiver temperatures most closely match those found in the data product.
+
+Reference chirps are contained in binary files as 4096 floating point numbers,
+each 4 bytes long and stored in least significant byte first (LSB) order. The
+first 2048 values represent the real part of the reference chirp, while the
+remaining 2048 values constitute its imaginary part.
+
+Reference chirps are expressed as complex spectra in the Fourier frequency
+domain. Frequency spacing between samples is (80/3 MHz) / 4096 = 6.51 kHz.
+Chirps are in base band, and spectra are ordered in increasing frequency
+order. Zero frequency corresponds to sample 1025.
+
+To use the reference chirps for range compression of raw data, the following
+steps need to be performed:
+
+- Extend the length of the vector containing the raw data samples from 3600 to
+  4096 through zero padding.
+
+- Multiply the raw data by the complex exponential of 2.Pi.i.F_c.t where the
+  dot denotes multiplication and Pi is pi, i is the imaginary unit, F_c is
+  equal to (80/3 - 20) MHz, and t is a vector 4096 samples long containing
+  linearly increasing values starting from zero, and each spaced 3/80
+  microseconds apart from the next.
+
+- Compute the FFT of the result.
+
+- Select only the central 2048 samples of the complex spectrum, that is from
+  sample 1025 to sample 3072 if spectrum samples are ordered for increasing
+  frequency.
+
+- Multiply the result by the complex conjugate of the reference chirp.
+
+- Compute the IFFT of the result
+
+------------------------------------------------------------------------------
+
+The files listed below are found in this directory.
+
+CALIBRATION_PLAN.LBL            - PDS label for CALIBRATION_PLAN.PDF.
+
+CALIBRATION_PLAN.PDF            - Adobe Acrobat version of the Mars
+                                  Reconnaissance Orbiter SHAllow RADar
+                                  Calibration Plan.
+
+CALINFO.TXT                     - The file you are reading.
+
+REFERENCE_CHIRP_M05TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -5 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_M05TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -5 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_M05TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -5 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_M05TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -5 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_M05TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -5 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_M10TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -10 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_M10TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -10 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_M10TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -10 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_M10TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -10 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_M10TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -10 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_M15TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -15 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_M15TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -15 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_M15TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -15 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_M15TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -15 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_M15TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -15 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_M20TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -20 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_M20TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -20 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_M20TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -20 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_M20TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -20 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_M20TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  -20 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_P00TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  0 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_P00TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  0 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_P00TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  0 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_P00TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  0 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_P00TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  0 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_P20TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +20 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_P20TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +20 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_P20TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +20 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_P20TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +20 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_P20TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +20 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_P40TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +40 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_P40TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +40 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_P40TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +40 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_P40TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +40 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_P40TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +40 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.
+
+REFERENCE_CHIRP_P60TX_M20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +60 degrees C and the temperature of the
+                                  receiver is at -20 degrees C.
+
+REFERENCE_CHIRP_P60TX_P00RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +60 degrees C and the temperature of the
+                                  receiver is at 0 degrees C.
+
+REFERENCE_CHIRP_P60TX_P20RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +60 degrees C and the temperature of the
+                                  receiver is at +20 degrees C.
+
+REFERENCE_CHIRP_P60TX_P40RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +60 degrees C and the temperature of the
+                                  receiver is at +40 degrees C.
+
+REFERENCE_CHIRP_P60TX_P60RX.DAT - Reference chirp to be used for range
+                                  processing of the received signal when the
+                                  temperature of the transmitter is at
+                                  +60 degrees C and the temperature of the
+                                  receiver is at +60 degrees C.

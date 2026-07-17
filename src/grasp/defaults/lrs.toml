@@ -1,0 +1,99 @@
+# Per-stage parameter defaults for LRS processing.
+# Tables under [base.*] apply to all product types; tables under
+# [EDR.*] / [RDR.*] override or extend the base values.
+
+[base.general]
+verbose = true
+
+[base.preprocessing]
+enabled      = true
+align_traces = true
+save_data    = false
+save_images  = false
+save_state   = false
+
+[base.range_compression]
+enabled = false
+
+[base.emi_suppression]
+enabled = false
+
+[base.iono_comp]
+enabled = false
+
+[base.output]
+data_output_type = "BASIC"
+byte_order       = "big"
+
+[base.plots]
+vmin       = 0
+vmax       = 60
+invert     = false
+buffer_km  = 50.0
+per_frame  = false
+
+[base.final_output]
+save_data   = true
+save_images = true
+save_segy   = false
+save_state  = false
+
+[base.csim]
+enabled     = true
+save_state  = false
+save_data   = true
+save_images = true
+apply_curve = true
+ct_step     = 525.0   # ~7 λ
+ct_dist     = 100000.0
+################################################################
+#
+# EDR
+#
+################################################################
+[EDR.sar]
+enabled                  = true
+method                   = "RANGE-DOPPLER"
+lamb                     = 60
+os_factor                = 1
+window                   = "HANNING"
+window_alpha             = 0.5
+number_of_looks          = 3
+remove_doppler_centroid  = false
+interp_cval              = 0.0
+save_data                = false
+save_images              = false
+save_state               = false
+
+[EDR.mlk]
+enabled         = true
+number_of_looks = 3            # TODO verify
+os_factor       = 1
+window_type     = "HANNING"
+window_alpha    = 0.5
+coherent        = false
+save_data       = false
+save_images     = false
+save_state      = false
+
+[EDR.csim]
+ct_step = 500.0
+ct_dist = 90000.0
+
+# ---------------- RDR ----------------
+[RDR.sar]
+enabled     = false
+save_data   = false
+save_images = false
+save_state  = false
+
+[RDR.mlk]
+enabled     = false
+save_data   = false
+save_images = false
+save_state  = false
+
+[RDR.csim]
+ct_step = 500.0
+ct_dist = 90000.0
+

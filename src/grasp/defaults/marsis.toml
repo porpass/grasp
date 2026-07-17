@@ -1,0 +1,117 @@
+# Per-stage parameter defaults for MARSIS processing.
+# Tables under [base.*] apply to all product types; tables under
+# [EDR.*] / [RDR.*] override or extend the base values.
+
+[base.general]
+verbose = true
+
+[base.output]
+data_output_type = "BASIC"
+byte_order       = "big"
+
+[base.plots]
+vmin       = 0
+vmax       = 60
+invert     = false
+buffer_km  = 80.0
+per_frame  = false
+
+[base.final_output]
+save_data   = true
+save_images = true
+save_segy   = false
+save_state  = false
+
+[base.sar]
+enabled = false
+
+[base.mlk]
+enabled = false
+
+[base.csim]
+enabled     = true
+save_state  = false
+save_data   = true
+save_images = true
+apply_curve = true
+at_step     = 1000.0  # ~13 λ, similar facet:wavelength ratio as SHARAD's 200/15
+at_dist     = 6000.0  # one frame spacing — covers along-track surface between frames
+ct_step     = 500.0   # ~7 λ
+ct_dist     = 100000.0
+
+################################################################
+#
+# EDR
+#
+################################################################
+[EDR.preprocessing]
+enabled      = true
+align_traces = true
+save_data    = false
+save_images  = false
+save_state   = false
+
+[EDR.range_compression]
+enabled      = true
+chirp_type   = "IDEAL"
+filter_type  = "MATCHED"
+window       = "HANNING"
+window_alpha = 0.5
+save_data    = false
+save_images  = false
+save_state   = false
+
+[EDR.emi_suppression]
+enabled          = true
+method           =  "ADAPTIVE"
+statistic        =  "MAD"
+k                =  6.0
+window_size      = 129
+replace_strategy = "INTERP"
+interp_pad       = 5
+save_data        = false
+save_images      = false
+save_state       = false
+
+[EDR.iono_comp]
+enabled       = true
+method        = "CONTRAST"
+n_take        = 65
+contrast_L_eq = 80e3
+sgn           = 1
+window        = "RECTANGLE"
+window_alpha  = 0.5
+save_data     = false
+save_images   = false
+save_state    = false
+
+################################################################
+#
+# RDR
+#
+################################################################
+[RDR.preprocessing] # TODO Need to install these functions
+enabled      = false
+align_traces = false
+save_data    = false
+save_images  = false
+save_state   = false
+
+[RDR.range_compression]
+enabled     = false
+save_data   = false
+save_images = false
+save_state  = false
+
+[RDR.emi_suppression] # TODO Need to test this! Could be True?
+enabled     = false
+save_data   = false
+save_images = false
+save_state  = false
+
+[RDR.iono_comp] # TODO Need to test this!
+enabled     = false
+save_data   = false
+save_images = false
+save_state  = false
+

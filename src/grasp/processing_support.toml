@@ -1,0 +1,68 @@
+######################################################
+#
+# LRS
+#
+######################################################
+[LRS.EDR]
+preprocessing     = true
+range_compression = false
+emi_suppression   = false
+iono_comp         = false
+sar               = true
+mlk               = true
+
+[LRS.RDR]
+preprocessing     = false  # TODO: Develop!
+range_compression = false
+emi_suppression   = false # TODO: Test, should work
+iono_comp         = false # TODO: Test, should work
+sar               = false # Already SAR Processed
+mlk               = false # TODO: Test, should work
+######################################################
+#
+# MARSIS
+#
+######################################################
+[MARSIS.EDR]
+preprocessing     = true
+range_compression = true
+emi_suppression   = true
+iono_comp         = true
+sar               = false # Already SAR Processed
+mlk               = false # TODO: Test, should work
+
+[MARSIS.RDR]
+preprocessing     = true  # TODO: Develop!
+range_compression = false
+emi_suppression   = false # TODO: Test, should work
+iono_comp         = false # TODO: Test, should work
+sar               = false # Already SAR Processed
+mlk               = false # TODO: Test, should work
+######################################################
+#
+# SHARAD
+#
+######################################################
+[SHARAD.EDR]
+preprocessing     = true
+range_compression = true
+emi_suppression   = true
+iono_comp         = true
+sar               = true
+mlk               = true
+
+[SHARAD.RDR]
+preprocessing     = false  # TODO: Develop!
+range_compression = false
+emi_suppression   = false # TODO: Test, should work
+iono_comp         = false # TODO: Test, should work
+sar               = false # Already SAR Processed
+mlk               = false # TODO: Test, should work
+
+[SHARAD.US_RDR]
+preprocessing     = false
+range_compression = false # Already range compressed
+emi_suppression   = false # Already done
+iono_comp         = false # Already done
+sar               = false # Already done
+mlk               = false # Already done

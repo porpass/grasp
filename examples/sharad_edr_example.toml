@@ -1,0 +1,417 @@
+######################################################################
+#
+#  Example GRaSP processing job for SHARAD EDR                       #
+#
+######################################################################
+#
+#  General Notes
+#    - Section names are case-insensitive.
+#    - Field names within a section must match the dataclass fields
+#       in grasp_types.py exactly.
+#    - TOML has no null (do not write `None`)
+#       - leave a field out to keep its dataclass default
+#       - comment a field out to keep its dataclass default
+#    - Strings should be in quotes
+#    - Booleans are lowercase (true, false)
+#    - Please refer to toml-reference in the docs for more
+#      information
+#
+######################################################################
+#
+#  SHARAD EDR support tiers (all "supported"):
+#    - preprocessing
+#    - range_compression
+#    - emi_suppression
+#    - ionospheric_compensation
+#    - sar_processing
+#    - multilooking
+#    - clutter_simulation
+#
+######################################################################
+#
+# START INPUT PARAMETERS
+#
+######################################################################
+#
+#  General  ->  ProcessingParameters (top level)
+#
+# Options:
+#  out_dir (required): Absolute path to output directory
+#  verbose (false): Sets the verbosity level of outputs
+######################################################################
+[general]
+out_dir = "/path/to/output"
+verbose = true
+
+######################################################################
+#
+#  Final Output  ->  final_output (FinalOutputParams)
+#
+# End-of-pipeline product export options
+#
+# Options:
+#  save_data (true):   Saves the data in GRASP format
+#  save_images (true): Saves default images
+#      - see plot_parameters for further options
+#  save_segy (false): Convert the data into SEG-Y
+#      - If wishing to reproject the data into a local
+#        coordinate system, see output_parameters
+#  save_state (false): Save full HDF5 state snapshot.
+#      - Can be loaded in using grasp.load
+#
+######################################################################
+[final_output]
+save_data   = true
+save_images = true
+save_segy   = true
+save_state  = false
+
+######################################################################
+#
+#  Output  ->  output_parameters (OutputParameters)
+#
+# Controls how data is written when save_data = true anywhere
+# upstream.
+#
+# Options:
+#  data_output_type (basic): Determines type of output files
+#  byte_order (big): Byte order for the binary (big/little)
+#  tgt_crs: If saving a SEG-Y, supply a PROJ4 string, WKT String,
+#           or a filepath to a file containing such information.
+#           This will allow you to convert latitude and longitudes
+#           to the CRS, which will be included in the SEG-Y header.
+######################################################################
+[output_parameters]
+data_output_type = "basic"
+byte_order       = "big"
+
+######################################################################
+#
+#  Plots  ->  plot_parameters (PlotParameters)
+#
+# Image rendering for radargrams and browse images. Images are
+# rendered in decibels, relative to the median power value of the
+# first 100 samples.
+#
+# Options:
+#  lower_percentile (60): Lower clip percentile for automatic
+#                         dB scaling.
+#  upper_percentile (100): Upper clip percentile for automatic
+#                          dB scaling.
+#  vmin: Explicit minimum dB value. Will override lower_percentile.
+#  vmax: Explicit maximum dB value. Will override upper_percentile.
+#  cmap: Matplotlib colormap name. Omit for grayscale
+#  invert (false): Invert grayscale so strong returns appear dark
+#  buffer_km (25): DEM swath half-width (km) for browse images
+#  per_frame (false): Apply image scaling per frame rather than
+#    globally.
+#
+######################################################################
+[plot_parameters]
+vmin           = 0
+vmax           = 30
+invert         = false
+buffer_km      = 25.0
+
+######################################################################
+#
+#  Input  ->  file paths (SHARAD EDR has all three)
+#
+# Input files. PDS Label/XML, Science, and Auxiliary Files are
+# required. Failure to put a reachable and readable file will
+# result in a failed job.
+#
+# Note: You MUST use the PDS filenames. Failure to do so will
+#       result in a failed job. The PDS filenames are used to
+#       correctly identify the input files.
+#
+# Not backed by a dataclass; these feed directly into the Processing
+# job.
+#
+# Options:
+#  label_file (required): Path to PDS label file (PDS3 or PDS4)
+#  science_file (required): Path to PDS Science File
+#  auxiliary_file (required for EDR): Path to PDS Auxiliary File
+#
+######################################################################
+[input]
+label_file     = "/path/to/label.lbl"
+science_file   = "/path/to/science.dat"
+auxiliary_file = "/path/to/auxiliary.dat"
+
+######################################################################
+#
+#  Preprocessing  ->  PreprocessingParams
+#
+# Decompresses the SHARAD EDR and applies the instrument response.
+#
+# If desired, the receive windows across the observation are
+# normalized, placing the ellipsoid at n_center. While optional,
+# this is highly recommended. SAR processing will not focus properly
+# if the range windows are not properly aligned.
+#
+# Additional presum can be performed as well. Please ensure the
+# presum level you request is a multiple of the onboard presum value
+# (e.g., onboard presum=4; target_presum=16).
+#
+# Options:
+#  enabled (true): Run the preprocessing stage (highly recommended)
+#  target_presum: Target presum level. Omit for no additional
+#                 presum.
+#  align_traces (true): Remove receive window opening time offset and
+#                       align the ellipsoid with n_center
+#                       (highly recommended)
+#  n_center (n_samp//2): Sample index for the centered ellipsoid.
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[preprocessing]
+enabled       = true
+target_presum = 8
+align_traces  = true
+save_data     = false
+save_images   = false
+save_state    = false
+
+######################################################################
+#
+#  Range Compression  ->  RangeCompressionParams
+#
+# Applies a matched/inverse filter to the data
+#
+# Options:
+#  enabled (true): Run the range-compression stage
+#  chirp_type (ideal): Choose either 'ideal' for the
+#     synthetic/ideal LFM signal or 'calibrated' to apply the
+#     temperature-dependent SHARAD reference chirps.
+#  filter_type (matched): Choose either "matched" or "inverse"
+#  window (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied during range compression
+#     for side-lobe reduction.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[range_compression]
+enabled      = true
+chirp_type   = "ideal"
+filter_type  = "matched"
+window       = "blackman-harris"
+save_data    = false
+save_images  = true
+save_state   = false
+
+######################################################################
+#
+#  EMI Suppression  ->  EMISuppresionParams
+#
+# Detects narrow-band interference (i.e., EMI-spikes) in the range
+# spectrum and replaces affected bins.
+#
+# Options:
+#  enabled (false): Run the EMI-suppression stage
+#  method (adaptive): Adaptive uses local statistics per bin (ADAPTIVE only)
+#  statistic (mad): Local-statistic method used to form the threshold ("MAD" or "STD").
+#  k (1.5): Outlier multiplier.
+#    - For ADAPTIVE/MAD, threshold = median + k * 1.4826 * MAD
+#  window_size (129): Sliding-window length (samples) used to compute
+#    the local baseline.
+#  replace_strategy (interp): How flagged bins are replaced
+#    (ADAPTIVE ONLY)
+#    - INTERP: linearly interpolate magnitude
+#    - BASELINE: uses the local-baseline value
+#    - ZERO: zeros the bin
+#  interp_pad (2): Number of anchor bins on each side of
+#    flagged bin. Used by INTERP
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[emi_suppression]
+enabled          = true
+method           = "ADAPTIVE"
+statistic        = "MAD"
+k                = 0.75
+window_size      = 129
+replace_strategy = "INTERP"
+interp_pad       = 10
+save_data        = false
+save_images      = true
+save_state       = false
+
+######################################################################
+#
+#  Ionospheric Compensation  ->  iono_comp (IonoCompParams)
+#
+# Correct for the dispersive phase error introduced by Mars'
+# ionosphere. Campbell method will correct for delay, Contrast Method
+# will not.
+#
+# Options:
+#  enabled (false): Run the ionosphere compensation stage.
+#    Highly recommended for any observation with SZA < 100.
+#  method (campbell): CONTRAST method is described in Picardi, G.,
+#    & Sorge, S. (2000) and Cartacci et al. (2013) method. CAMPBELL
+#    method is described in Campbell et al. (2011) and Campbell et
+#    al. (2021)
+#  n_take (method dependent): Stacking neighborhood width.
+#  campbell_b (1.93): Power-law exponent for the Campbell phase model
+#  campbell_n_phase (400): Number of phase states sampled
+#  campbell_delta (0.0125): E-value step size
+#  contrast_L_eq (80e3): Equivalent path length (m)
+#  sgn (1): Sign convention for the phase exponential
+#  window (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied to the spectrum during
+#     ionospheric phase correction.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  metric (method default): Autofocus metric. Options: L1, L4,
+#     ENTROPY, PEAK_SNR. Defaults to PEAK_SNR for Campbell and L4 for
+#     Contrast if unset.
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+
+[ionospheric_compensation]
+enabled        = true
+method         = "CAMPBELL"
+save_images    = true
+
+######################################################################
+#
+#  sar_processing  ->  sar (SARParams)
+#
+# Synthetic-aperture focusing parameters The selected method
+# determines how range-compressed echoes are coherently combined
+#
+# Options:
+#  enabled (true): Run the SAR stage
+#  method (range-doppler): Choose between "unfocused", "backscatter",
+#    or "range-doppler". For "backscatter", multilooking is built-in.
+#    If "backscatter" is used, the follow-on multilook stage will be
+#    disabled.
+#  aperture_length (method dependent): Synthetic aperture length in
+#    input columns. Omit to compute from geometry. Exceeding the
+#    unaliased limit triggers a warning
+#    (see grasp.max_unaliased_aperture).
+#  lamb (15.0): Effective wavelength in metres for the azimuth
+#    matched filter and RCMC. Nominal center wavelength. If
+#    performace is degraded, try using 12 m instead. 
+#  os_factor (1): Output oversampling factor relative to frame
+#    resolution
+#  window (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied in the azimuth Doppler
+#     domain for sidelobe suppression. With long apertures, use a
+#     window with strong edge attenuation (Blackman-Harris, Nuttall,
+#     Kaiser beta >= 6) to suppress Doppler aliasing.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  number_of_looks (1): BACKSCATTER ONLY
+#  remove_doppler_centroid (false): If true, demodulate the Doppler
+#    centroid before processing
+#  interp_cval (0.0): Fill value for RCMC interpolation outside the
+#    data bounds.
+#  coherent (false): UNFOCUSED-only. Returns complex output
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+
+[sar_processing]
+enabled                 = true
+method                  = "backscatter"
+aperture_length         = 768
+lamb                    = 12.0
+os_factor               = 2
+window                  = "flattop"
+number_of_looks         = 7
+save_images             = true
+
+######################################################################
+#
+#  multilooking  ->  mlk (MLKParams)
+#
+# Post-SAR averaging that trades azimuth resolution for speckle
+# reduction and SNR improvement.
+#
+#  Note: only applicable for Range-Doppler SAR. `backscatter` SAR
+#  output is already multilooked.
+#
+# Options:
+#  enabled (false): Run the multilook stage
+#  number_of_looks (5): Window length in columns.
+#  os_factor (1): Output oversampling factor
+#  window_type (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied along azimuth during
+#     multilook averaging.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  coherent (false): If true, average complex data; if false, average
+#    power
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[multilooking]
+enabled         = true
+number_of_looks = 13
+os_factor       = 2
+window_type     = "tukey"
+window_alpha    = 0.5
+coherent        = true
+
+######################################################################
+#
+#  Clutter Simulation -> csim (ClutterSimParams)
+#
+# Simulates surface-clutter returns from a DEM for comparison against
+# the final radargram.
+#
+# at_step, at_dist, ct_step, ct_dist, bin_size, and n_samples all
+# have instrument-dependent defaults if omitted.
+#
+# Options:
+#  enabled (true): Run the clutter simulation
+#  dem_path: DEM raster path. Omit to auto-select per target body
+#    via the data-paths configuration resolved by
+#    `grasp.common.config.get_data_path` (MOLA for Mars, LOLA for
+#    Moon).
+#  bin_size: Range bin size in seconds
+#  n_samples: Number of range samples per trace.
+#  at_step: Along-track facet dimension (m)
+#  at_dist: Along-track half-extent of the simulation grid (m)
+#  ct_step: Cross-track facet dimension (m)
+#  ct_dist: Cross-track extent from nadir (m)
+#  n_center (n_samples // 2): Sample index of the ellipsoid
+#    via SPICE
+#  save_data (true): Export the data after this stage
+#  save_images (true): Export image and browse image
+#                      after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#  apply_curve (true): apply the simc soft-shoulder tone-mapping
+#    LUT to the cluttergram BMP after the linear max-normalize
+######################################################################
+[clutter_simulation]
+enabled  = true
+save_data = true
+save_images = false
+apply_curve = true

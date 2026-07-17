@@ -1,0 +1,33 @@
+PDS_VERSION_ID         = PDS3
+RECORD_TYPE            = STREAM
+LABEL_REVISION_NOTE    = "2007-08-03, J. Ward, removed embedded tabs"
+
+^PDF_DOCUMENT          = "CALIBRATION_PLAN.PDF"
+
+OBJECT                 = PDF_DOCUMENT
+
+  DOCUMENT_NAME        = "SHARAD In-Flight Calibration Plan"
+  DOCUMENT_FORMAT      = "ADOBE PDF"
+  DOCUMENT_TOPIC_TYPE  = "CALIBRATION DESCRIPTION"
+  INTERCHANGE_FORMAT   = "BINARY"
+  PUBLICATION_DATE     = 2006-08-03
+  ABSTRACT_TEXT        = "SHARAD on-ground calibration activities have been
+                          limited to the characterization of the SEB (SHARAD
+                          Electronic Box), not having been possible to
+                          perform extensive characterization of the flight
+                          antenna nor end-to-end calibrations on ground.
+                          Scope of the present document is to define the
+                          activities to be carried out in-flight in order to
+                          ensure SHARAD products calibration. The calibration
+                          needs are assessed and an overall calibration
+                          strategy is then defined, leading to the
+                          identification of the data sets to be collected and
+                          relevant processing to be applied. The document
+                          also address how to exploit the available
+                          calibration data (from both on-ground and in-flight
+                          calibration) to correct SHARAD products, and the
+                          organization of the calibration database."
+
+END_OBJECT             = PDF_DOCUMENT
+
+END

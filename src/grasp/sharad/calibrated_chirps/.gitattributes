@@ -1,0 +1,6 @@
+# Preserve PDS files byte-for-byte (CRLF endings, binary content).
+# See PROVENANCE.md for the "bit-identical to PDS distribution" claim.
+calibration_plan.lbl   binary
+calibration_plan.pdf   binary
+calinfo.txt            binary
+*.dat                  binary

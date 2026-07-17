@@ -1,0 +1,311 @@
+######################################################################
+#
+#  Example GRaSP processing job for LRS EDR (SA, SW)
+#
+######################################################################
+#
+#  General Notes
+#    - Section names are case-insensitive.
+#    - Field names within a section must match the dataclass fields
+#       in grasp_types.py exactly.
+#    - TOML has no null (do not write `None`)
+#       - leave a field out to keep its dataclass default
+#       - comment a field out to keep its dataclass default
+#    - Strings should be in quotes
+#    - Booleans are lowercase (true, false)
+#    - Please refer to toml-reference in the docs for more
+#      information
+#
+######################################################################
+#
+#  LRS EDR support tiers:
+#    - preprocessing
+#    - sar_processing
+#    - multilooking
+#    - clutter_simulation
+#
+######################################################################
+#
+# START INPUT PARAMETERS
+#
+######################################################################
+#
+#  General  ->  ProcessingParameters (top level)
+#
+# Options:
+#  out_dir (required): Absolute path to output directory
+#  verbose (false): Sets the verbosity level of outputs
+######################################################################
+[general]
+out_dir = "/path/to/output"
+verbose = true
+
+######################################################################
+#
+#  Final Output  ->  final_output (FinalOutputParams)
+#
+# End-of-pipeline product export options
+#
+# Options:
+#  save_data (true):   Saves the data in GRASP format
+#  save_images (true): Saves default images
+#      - see plot_parameters for further options
+#  save_segy (false): Convert the data into SEG-Y
+#      - If wishing to reproject the data into a local
+#        coordinate system, see output_parameters
+#  save_state (false): Save full HDF5 state snapshot.
+#      - Can be loaded in using grasp.load
+#
+######################################################################
+[final_output]
+save_data   = true
+save_images = true
+save_segy   = true
+save_state  = false
+
+######################################################################
+#
+#  Output  ->  output_parameters (OutputParameters)
+#
+# Controls how data is written when save_data = true anywhere
+# upstream.
+#
+# Options:
+#  data_output_type (basic): Determines type of output files
+#  byte_order (big): Byte order for the binary (big/little)
+#  tgt_crs: If saving a SEG-Y, supply a PROJ4 string, WKT String,
+#           or a filepath to a file containing such information.
+#           This will allow you to convert latitude and longitudes
+#           to the CRS, which will be included in the SEG-Y header.
+######################################################################
+[output_parameters]
+data_output_type = "basic"
+byte_order       = "big"
+
+######################################################################
+#
+#  Plots  ->  plot_parameters (PlotParameters)
+#
+# Image rendering for radargrams and browse images. Images are
+# rendered in decibels, relative to the median power value of the
+# first 100 samples.
+#
+# Options:
+#  lower_percentile (60): Lower clip percentile for automatic
+#                         dB scaling.
+#  upper_percentile (100): Upper clip percentile for automatic
+#                          dB scaling.
+#  vmin: Explicit minimum dB value. Will override lower_percentile.
+#  vmax: Explicit maximum dB value. Will override upper_percentile.
+#  cmap: Matplotlib colormap name. Omit for grayscale
+#  invert (false): Invert grayscale so strong returns appear dark
+#  buffer_km (25): DEM swath half-width (km) for browse images
+#
+######################################################################
+[plot_parameters]
+vmin           = 0
+vmax           = 60
+invert         = false
+buffer_km      = 100
+
+######################################################################
+#
+#  Input  ->  file paths (LRS EDR has two)
+#
+# Input files. DARTS Label and Science Files are required.
+# Failure to put a reachable and readable file will result in a
+# failed job.
+#
+# Note: You MUST use the DARTS filenames. Failure to do so will
+#       result in a failed job. The DARTS filenames are used to
+#       correctly identify the input files.
+#
+# Not backed by a dataclass; these feed directly into the Processing
+# job.
+#
+# Options:
+#  label_file (required): Path to DARTS/PDS label file (PDS3)
+#  science_file (required): Path to DARTS Science File
+#
+######################################################################
+[input]
+label_file     = "/path/to/label.lbl"
+science_file   = "/path/to/science.tbl"
+
+######################################################################
+#
+#  Preprocessing  ->  PreprocessingParams
+#
+# Demeans the LRS waveform data, FFTs, and applies Residual Video
+# Phase (RVP) correctio. The receiver DC spike from the FCMC mix is
+# suppressed automatically (no configuration required).
+#
+# If desired, the receive windows across the observation are
+# normalized, placing the ellipsoid at n_center. While optional,
+# this is highly recommended. SAR processing will not focus properly
+# if the range windows are not properly aligned.
+#
+# Options:
+#  enabled (true): Run the preprocessing stage (highly recommended)
+#  align_traces (true): Remove receive window opening time offset and
+#                       align the ellipsoid with n_center
+#                       (highly recommended)
+#  n_center (n_samp//2): Sample index for the centered ellipsoid.
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[preprocessing]
+enabled       = true
+align_traces  = true
+save_data     = false
+save_images   = false
+save_state    = false
+
+######################################################################
+#
+#  Range Compression  ->  RangeCompressionParams
+#
+# LRS is range compressed onboard.
+#
+#  EMI Suppression  ->  EMISuppresionParams
+#
+# Not supported for LRS EDRs
+#
+#  Ionospheric Compensation  ->  iono_comp (IonoCompParams)
+#
+# Only applicable for MARSIS and SHARAD
+#
+######################################################################
+
+######################################################################
+#
+#  sar_processing  ->  sar (SARParams)
+#
+# Synthetic-aperture focusing parameters The selected method
+# determines how range-compressed echoes are coherently combined.
+#
+# LRS SW data should process with minimal artifact given a
+# sufficient aperture size. LRS SA data may not focus properly due
+# to undersampling in the azimuth dimension.
+#
+# Options:
+#  enabled (true): Run the SAR stage
+#  method (range-doppler): Choose between "unfocused", "backscatter",
+#    or "range-doppler". For "backscatter", multilooking is built-in.
+#    If "backscatter" is used, the follow-on multilook stage will be
+#    disabled.
+#  aperture_length (method dependent): Synthetic aperture length in
+#    input columns. Omit to compute from geometry. Exceeding the
+#    unaliased limit triggers a warning
+#    (see grasp.max_unaliased_aperture).
+#  lamb (60.0): Effective wavelength in metres for the azimuth
+#    matched filter and RCMC. For LRS the empirical optimum is
+#    ~60 m (c/5 MHz, the true center frequency). Unlike SHARAD,
+#    LRS does NOT favour the band edge. Override only if your
+#    data has unusual characteristics.
+#  os_factor (1): Output oversampling factor relative to frame
+#    resolution
+#  window (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied in the azimuth Doppler
+#     domain for sidelobe suppression. With long apertures, use a
+#     window with strong edge attenuation (Blackman-Harris, Nuttall,
+#     Kaiser beta >= 6) to suppress Doppler aliasing.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  number_of_looks (1): BACKSCATTER ONLY
+#  remove_doppler_centroid (false): If true, demodulate the Doppler
+#    centroid before processing
+#  interp_cval (0.0): Fill value for RCMC interpolation outside the
+#    data bounds.
+#  coherent (false): UNFOCUSED-only. Returns complex output
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[sar_processing]
+enabled                 = true
+method                  = "backscatter"
+aperture_length         = 128
+lamb                    = 60.0
+os_factor               = 2
+window                  = "flattop"
+number_of_looks         = 1
+save_images             = true
+
+######################################################################
+#
+#  multilooking  ->  mlk (MLKParams)
+#
+# Post-SAR averaging that trades azimuth resolution for speckle
+# reduction and SNR improvement.
+#
+#  Note: only applicable for Range-Doppler SAR. `backscatter` SAR
+#  output is already multilooked.
+#
+# Options:
+#  enabled (false): Run the multilook stage
+#  number_of_looks (5): Window length in columns.
+#  os_factor (1): Output oversampling factor
+#  window_type (hanning): See window types in toml-reference for a list of
+#     supported windowing functions. Applied along azimuth during
+#     multilook averaging.
+#  window_alpha: Tukey taper fraction. Only used when window=tukey
+#  coherent (false): If true, average complex data; if false, average
+#    power
+#  save_data (false): Export the data after this stage
+#  save_images (false): Export image and browse image
+#                       after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#
+######################################################################
+[multilooking]
+enabled         = false
+number_of_looks = 3
+os_factor       = 2
+window_type     = "tukey"
+window_alpha    = 0.5
+coherent        = true
+######################################################################
+#
+#  Clutter Simulation -> csim (ClutterSimParams)
+#
+# Simulates surface-clutter returns from a DEM for comparison against
+# the final radargram.
+#
+# at_step, at_dist, ct_step, ct_dist, bin_size, and n_samples all
+# have instrument-dependent defaults if omitted.
+#
+# Options:
+#  enabled (true): Run the clutter simulation
+#  dem_path: DEM raster path. Omit to auto-select per target body
+#    via the data-paths configuration resolved by
+#    `grasp.common.config.get_data_path` (MOLA for Mars, LOLA for
+#    Moon).
+#  bin_size: Range bin size in seconds
+#  n_samples: Number of range samples per trace.
+#  at_step: Along-track facet dimension (m)
+#  at_dist: Along-track half-extent of the simulation grid (m)
+#  ct_step: Cross-track facet dimension (m)
+#  ct_dist: Cross-track extent from nadir (m)
+#  n_center (n_samples // 2): Sample index of the ellipsoid
+#    via SPICE
+#  save_data (true): Export the data after this stage
+#  save_images (true): Export image and browse image
+#                      after this stage
+#  save_state (false): Save full HDF5 state snapshot
+#                      after this stage
+#  apply_curve (true): apply the simc soft-shoulder tone-mapping
+#    LUT to the cluttergram BMP after the linear max-normalize
+######################################################################
+[clutter_simulation]
+enabled  = true
+save_data = true
+save_images = false
+apply_curve = true
