@@ -71,3 +71,7 @@ This Code of Conduct is adapted from the [Contributor Covenant][homepage], versi
 available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
 
 [homepage]: https://www.contributor-covenant.org
+
+---
+
+<sub>Portions of this documentation were drafted with assistance from Claude Opus 4.8 (Anthropic), July 2026.</sub>
