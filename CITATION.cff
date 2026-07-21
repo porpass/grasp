@@ -5,10 +5,10 @@ authors:
   - family-names: Perry
     given-names: Matthew R.
     email: mperry@psi.edu
-version: 0.5.1
-date-released: 2026-06-08
+version: 0.6.0a1
+date-released: 2026-07-17
 license: BSD-3-Clause
-repository-code: "https://github.com/mr-perry/grasp"
+repository-code: "https://github.com/porpass/grasp"
 keywords:
   - radar sounder
   - planetary science

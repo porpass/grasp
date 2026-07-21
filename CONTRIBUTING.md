@@ -1,92 +1,127 @@
-# Contributing
+# Contributing to porpass/grasp
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+Thanks for your interest in improving PORPASS. Bug reports, feature
+requests, and pull requests are all welcome.
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+## Before you start
 
-## Pull Request Process
+- Read the [Code of Conduct](CODE_OF_CONDUCT.md).
+- For substantial changes, open an issue first so we can align on
+  the approach before you invest coding time.
+- Security-sensitive issues follow the process in
+  [SECURITY.md](SECURITY.md) — please do not open a public issue
+  for those.
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
+## Reporting issues
 
-## Code of Conduct
+Bugs and feature requests are filed through GitHub Issues. Opening a
+new issue offers two forms:
 
-### Our Pledge
+- **Bug Report** — something is broken, incorrect, or not behaving
+  as expected.
+- **Feature Request** — new functionality or an improvement to what
+  already exists.
 
-In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, gender identity and expression, level of experience,
-nationality, personal appearance, race, religion, or sexual identity and
-orientation.
+Please search [existing issues](../../issues) first to avoid
+duplicates, and file one issue per report. Blank issues are
+disabled; if neither form fits, the chooser links to alternatives.
 
-### Our Standards
+A good bug report includes the exact steps to reproduce, what you
+expected versus what happened, any error text (copied, not
+paraphrased) with screenshots or logs, and your browser and OS. The
+form prompts for each of these.
 
-Examples of behavior that contributes to creating a positive environment
-include:
+## Development setup
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+See the "Getting started" section of [README.md](README.md) for the
+installation instructions.
 
-Examples of unacceptable behavior by participants include:
+## The porpass/* organization
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
-advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
-  address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+This repo is one of four under [github.com/porpass](https://github.com/porpass):
 
-### Our Responsibilities
+- `porpass/web` — the PHP web application
+- `porpass/daemon` — the processing worker
+- `porpass/grasp` — this repo, the radar processing library
+- `porpass/db` — database schema and provisioning (planned)
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
+## Branches and pull requests
 
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
+This repo follows a Git Flow model with two long-lived branches:
 
-### Scope
+- `main` holds released versions only. It changes only when a
+  release or hotfix is merged in, and every commit on it is tagged
+  and deployable. Production is deployed from a version tag on
+  `main`.
+- `develop` is the integration branch where ongoing work
+  accumulates. It is the default target for everyday changes.
+- Feature branches: `feature/<short-name>`, off `develop`.
+- Bug fixes: `debug/<short-name>` or `fix/<short-name>`, off
+  `develop`.
+- Release branches: `release/<version>` (e.g. `release/0.2.0`) —
+  short-lived, for stabilizing a version before it ships.
+- Hotfix branches: `hotfix/<short-name>` — urgent fixes to the
+  released production version.
 
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
+### Everyday work
 
-### Enforcement
+Branch `feature/*` or `fix/*` off `develop`, describe the change in
+the PR body, and squash-merge back into `develop`. Small,
+independent commits are fine - the squash collapses them.
+Squash-merging applies to these short-lived branches only; the
+release and hotfix merges below do not squash.
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at grasp@psi.edu. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
+### Cutting a release
 
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
+When `develop` is feature-complete for the next version, cut
+`release/<version>` from `develop`. Only stabilization commits land
+there — bug fixes, the version bump, and final prep. Tag
+pre-releases on the branch as you go (e.g. `v0.2.0a.1`,
+`v0.2.0b.1`). When it's ready:
 
-### Attribution
+1. Merge `release/<version>` into `main` with a normal merge (not
+   squashed), tag `main` with the final version (e.g. `v0.2.0`), and
+   deploy that tag.
+2. Merge `release/<version>` back into `develop` so the
+   stabilization fixes aren't lost.
+3. Delete the release branch.
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at [http://contributor-covenant.org/version/1/4][version]
+### Hotfixes
 
-[homepage]: http://contributor-covenant.org
-[version]: http://contributor-covenant.org/version/1/4/
+For an urgent fix to the live version, branch `hotfix/<short-name>`
+from the released tag on `main`, commit the fix, and merge it back
+into `main` with a normal merge. Tag the patch release (e.g.
+`v0.2.1`) and deploy. Merge the hotfix into `develop` as well so the
+fix carries forward.
+
+## Commit style
+
+The project uses [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(scope): summary
+fix(scope): summary
+refactor(scope): summary
+docs(scope): summary
+chore(scope): summary
+```
+
+Common scopes: `admin`, `auth`, `browse`, `dashboard`, `gis`,
+`map`, `observations`, `processing`, `ui`.
+
+
+## Versioning
+
+GRaSP uses [PEP440](https://peps.python.org/pep-0440/)
+versioning consistent with Python standards.
+See [CHANGELOG.md](CHANGELOG.md) for the release log in
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+## Reviews and merging
+
+The maintainers will review PRs; there is no formal multi-reviewer
+sign-off requirement during the alpha.
+
+---
+
+<sub>Portions of this documentation were drafted with assistance from Claude Opus 4.8 (Anthropic), July 2026.</sub>

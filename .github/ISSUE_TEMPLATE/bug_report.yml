@@ -1,0 +1,151 @@
+name: Bug Report
+description: Report something in GRaSP that is broken, incorrect, or not behaving as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping test GRaSP! Please fill out the fields below so the problem can be reproduced and triaged quickly.
+
+        Before filing, please search existing issues to avoid duplicates. If you find a related one, add a comment there instead.
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the problem.
+      placeholder: e.g. SPICE errors raised for records with the corrupted-data flag set to 1
+    validations:
+      required: true
+  - type: dropdown
+    id: instrument
+    attributes:
+      label: Instrument
+      description: Which instrument's data were you processing?
+      options:
+        - Not applicable
+        - SHARAD
+        - MARSIS
+        - LRS
+        - Multiple
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of GRaSP does this affect? Choose the closest match, or "Other / not sure".
+      options:
+        - Data loading / parsing (PDS, input formats)
+        - Instrument support (SHARAD / MARSIS / LRS)
+        - Range compression / focusing
+        - Clutter simulation
+        - EMI / interference suppression
+        - Geometry / SPICE
+        - Geolocation / datuming / DEM
+        - Output / file writing
+        - Configuration / parameters
+        - Installation / packaging / dependencies
+        - Documentation
+        - Other / not sure
+    validations:
+      required: false
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: >-
+        The exact steps or, ideally, a minimal code snippet that triggers the problem.
+        Include the relevant configuration (sanitized config.toml / job file) if applicable.
+      placeholder: |
+        1. Load observation '...'
+        2. Call '...' with parameters '...'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened? Paste the full traceback or error message if there is one.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: GRaSP version
+      description: Release tag, or commit hash if running from a branch.
+      placeholder: e.g. v0.5.0, or commit a1b2c3d
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: e.g. 3.11.8
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g. Ubuntu 22.04, macOS 14, Windows 11
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation method
+      options:
+        - conda (environment.yml)
+        - pip
+        - Editable install (pip install -e .)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Relevant package versions
+      description: >-
+        Optional but helpful. Paste versions of relevant dependencies
+        (e.g. numpy, scipy, rasterio, pyproj, spiceypy), or the output of conda list / pip freeze.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: data
+    attributes:
+      label: Input data
+      description: >-
+        Which observation/product were you processing, and is it publicly available (e.g. a PDS product ID)
+        or can it be shared for reproduction?
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Additional logs or plots
+      description: Any additional logs, plots, or output that help. Optional.
+    validations:
+      required: false
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How much does this get in your way?
+      options:
+        - Low – cosmetic or minor annoyance
+        - Medium – functionality impaired but I can work around it
+        - High – blocks me from completing a task
+        - Critical – data loss, corruption, or GRaSP unusable
+    validations:
+      required: false
