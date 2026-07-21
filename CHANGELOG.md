@@ -9,6 +9,9 @@ While the version is `0.x`, breaking changes may occur in minor releases.
 
 ## [Unreleased]
 
+## [0.6.0a3] - 2026-07-21
+- Updated ALL the version numbers this time.
+
 ## [0.6.0a2] - 2026-07-21
 
 - Heavy update to `README.md` to include added functionality since the previous
