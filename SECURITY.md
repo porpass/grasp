@@ -36,3 +36,7 @@ The following types of issues are considered outside the scope of our security p
 * Vulnerabilities introduced entirely by custom modifications or third-party plug-ins.
 
 Thank you for helping keep this project safe for everyone!
+
+---
+
+<sub>Portions of this documentation were drafted with assistance from Claude Opus 4.8 (Anthropic), July 2026.</sub>

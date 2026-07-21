@@ -74,9 +74,9 @@ test = [
 testpaths = ["tests"]
 
 [project.urls]
-Homepage = "https://github.com/mr-perry/grasp"
-Repository = "https://github.com/mr-perry/grasp"
-Issues = "https://github.com/mr-perry/grasp/issues"
+Homepage = "https://github.com/porpass/grasp"
+Repository = "https://github.com/porpass/grasp"
+Issues = "https://github.com/porpass/grasp/issues"
 
 [project.scripts]
 grasp = "grasp.cli:main"

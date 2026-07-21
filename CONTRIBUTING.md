@@ -121,3 +121,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the release log in
 
 The maintainers will review PRs; there is no formal multi-reviewer
 sign-off requirement during the alpha.
+
+---
+
+<sub>Portions of this documentation were drafted with assistance from Claude Opus 4.8 (Anthropic), July 2026.</sub>
