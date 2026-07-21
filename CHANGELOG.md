@@ -9,6 +9,11 @@ While the version is `0.x`, breaking changes may occur in minor releases.
 
 ## [Unreleased]
 
+## [0.6.0a2] - 2026-07-21
+
+- Heavy update to `README.md` to include added functionality since the previous
+  update.
+- Updated most of the documenation.
 - Updated the CONTRIBUTING.md documentation to include proper Git Flow procedures
 - Added `bug_report.yml` and `feature_request.yml` to `ISSUE_TEMPLATES`
 
